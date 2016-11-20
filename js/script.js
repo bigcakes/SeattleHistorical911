@@ -26,6 +26,7 @@
         console.log(data.length);
         
         rawData = data;
+        //barChartData = rawData;
         app.topData();
 
         resizeChart();
@@ -93,12 +94,19 @@
       .selectAll("rect")
       .data(function(d) { return d; });
 
-
     rectData.enter().append("rect")
+        .attr("width", x.bandwidth())
+        .attr("x", function(d) { return x(d.data.year); })
+        .attr("y", function(d) { return y(d[1]); });
+
+    //Update all rects
+    d3.selectAll("g.category rect")
+      .transition()
+      .duration(300)
         .attr("x", function(d) { return x(d.data.year); })
         .attr("y", function(d) { return y(d[1]); })
-        .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-        .attr("width", x.bandwidth());
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return y(d[0]) - y(d[1]); });
 
     categoryData.exit()
         .remove();
@@ -130,17 +138,21 @@
         .style("font", "10px sans-serif");
 
     legend.append("rect")
-        .attr("x", width - 18)
         .attr("width", 18)
         .attr("height", 18)
         .attr("fill", function (d) { return z(keys.indexOf(d)); });
 
+    d3.selectAll("g.legend rect")
+        .attr("x", width - 18);
+
     legend.append("text")
-        .attr("x", width - 24)
         .attr("y", 9)
         .attr("dy", ".35em")
         .attr("text-anchor", "end")
         .text(function(d) { return d; });
+
+    d3.selectAll("g.legend text")
+        .attr("x", width - 24);
 
     legendData.exit()
         .remove();
